@@ -1,4 +1,6 @@
-
+use anyhow::{Context, Ok, Result};
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 
 use clap::Parser;
 
@@ -11,20 +13,18 @@ struct Cli {
     path: std::path::PathBuf,
 }
 
-fn main() {
+fn main() -> Result<()> {
     let args = Cli::parse();
-    // let content = std::fs::read_to_string(&args.path).expect("could not read file");
-    let file = File::open(&args.path).expect("file not found");
-    // let file = File::open(&args.path)
-    //     .with_context(|| format!("could not read file `{}`", args.path.display()))?;
+    let file = File::open(&args.path)
+        .with_context(|| format!("could not read file `{}`", args.path.display()))?;
     let content = BufReader::new(file);
 
     for line in content.lines() {
-        let line = line.expect("could not read line");
+        //Unpack the result to ge the actual String
+        let line = line?;
         if line.contains(&args.pattern) {
-            println!("{}", line);
+            println!("{:?}", line);
         }
     }
-    // println!("pattern: {:?}, path:{:?}", args.pattern, args.path);
-    // Ok(())
+    Ok(())
 }
