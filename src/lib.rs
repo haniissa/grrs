@@ -9,3 +9,4 @@ pub fn find_matches(content: impl BufRead, pattern: &str, mut writer: impl std::
         }
     }
 }
+

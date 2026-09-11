@@ -17,11 +17,14 @@ struct Cli {
     path: std::path::PathBuf,
 }
 
-fn main() -> Result<()> {
+fn main() -> Result<()> {    
     let args = Cli::parse();
+    if args.pattern.is_empty(){
+        return Err(anyhow::anyhow!("pattern can not be empty"));
+    }
     let file = File::open(&args.path)
         .with_context(|| format!("could not read file `{}`", args.path.display()))?;
-    let content = BufReader::new(file);
+    let content = BufReader::new(file) ;
     grrs::find_matches(content, &args.pattern, &mut std::io::stdout());
     Ok(())
 }
